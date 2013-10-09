@@ -3,9 +3,9 @@ import subprocess
 import cmd
 import random
 from time import sleep
+from cores import Core, core_list
 
-
-core_list = ["samantha", "agnes", "vicki", "whisper", "good news", "daniel", "serena", "fiona"]
+## core_list = ["samantha", "agnes", "vicki", "whisper", "good news", "daniel", "serena", "fiona"]
 
 class Agnes(cmd.Cmd):
 	intro = "My name is Agnes. How can I help you?"
@@ -60,13 +60,13 @@ class Agnes(cmd.Cmd):
 
 	def do_show(self, arg):
 		if arg == "cores":
-			for element in core_list:
-				if agnes_core == element:
+			for core in core_list:
+				if agnes_core.name == element.name:
 					print "[active]",
 				print element
-			say("Are you trying to replace me?", agnes_core)
+			say("Are you trying to replace me?", agnes_core.voice)
 		elif arg == "core":
-			print agnes_core
+			print agnes_core.name
 
 	def do_bye(self, arg):
 		say("good-bye", agnes_core)
