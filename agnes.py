@@ -6,13 +6,15 @@ from time import sleep
 from cores import Core, core_list
 
 ## core_list = ["samantha", "agnes", "vicki", "whisper", "good news", "daniel", "serena", "fiona"]
+user_list = ["eduardo"]
+
 
 class Agnes(cmd.Cmd):
 	intro = "My name is Agnes. How can I help you?"
 	prompt = "[Agnes]"
 
 	def do_hello(self, arg):
-		say("hello", agnes_core.voice)
+		say(agnes_core.greeting, agnes_core.voice)
 
 	def do_sing(self, song):
 		song = load_song()
@@ -68,6 +70,18 @@ class Agnes(cmd.Cmd):
 			say("Are you trying to replace me?", agnes_core.voice)
 		elif arg == "core":
 			print agnes_core.name
+
+	def do_login(self, username):
+		global login_check
+		global active_user
+
+		for user in user_list:
+			if username == user:
+				login_check = True
+				active_user = user
+				say("It's you again", agnes_core.voice)
+		else:
+			say("I don't know who that is", agnes_core.voice)
 
 	def do_bye(self, arg):
 		say("good-bye", agnes_core.voice)
