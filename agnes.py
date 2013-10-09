@@ -12,13 +12,13 @@ class Agnes(cmd.Cmd):
 	prompt = "[Agnes]"
 
 	def do_hello(self, arg):
-		say("hello", agnes_core)
+		say("hello", agnes_core.voice)
 
 	def do_sing(self, song):
 		song = load_song()
 		for line in song:
 			print line
-			say(line, agnes_core)
+			say(line, agnes_core.voice)
 
 
 	## Borrowed from THX1138
@@ -29,11 +29,11 @@ class Agnes(cmd.Cmd):
 		response_counter = 0
 		response_max = random.randint(4,8)
 
-		say("tell me about your sins. I'm listening", agnes_core)
+		say("tell me about your sins. I'm listening", agnes_core.voice)
 		print "Microphone activated. Agnes awaiting confession..."
 		while confession_mode == True:
 			sleep(random.randint(3,8))
-			say(responses[random.randint(0,len(responses)-1)], agnes_core)
+			say(responses[random.randint(0,len(responses)-1)], agnes_core.voice)
 			response_counter = response_counter + 1
 			if response_counter == response_max:
 				confession_mode = False
@@ -43,33 +43,34 @@ class Agnes(cmd.Cmd):
 				   "Let us be thankful we have commerce", "Buy more", "Buy more now", "And be happy"]
 
 		for element in signoff:
-			say(element, agnes_core)
+			say(element, agnes_core.voice)
 
 
 	def do_lol(self, arg):
-		say("lol", agnes_core)
+		say("lol", agnes_core.voice)
 
 	def do_yolo(self, arg):
-		say("poyo", agnes_core)
+		say("poyo", agnes_core.voice)
 
 	def do_switch(self, new_core):
-		if new_core in core_list:
-			set_core(new_core)
+		for core in core_list:
+			if new_core == core.name:
+				set_core(new_core)
 		else:
-			say("I don't know who that is", agnes_core)
+			say("I don't know who that is", agnes_core.voice)
 
 	def do_show(self, arg):
 		if arg == "cores":
 			for core in core_list:
-				if agnes_core.name == element.name:
+				if agnes_core.name == core.name:
 					print "[active]",
-				print element
+				print core.name
 			say("Are you trying to replace me?", agnes_core.voice)
 		elif arg == "core":
 			print agnes_core.name
 
 	def do_bye(self, arg):
-		say("good-bye", agnes_core)
+		say("good-bye", agnes_core.voice)
 		return True
 
 
@@ -78,12 +79,12 @@ def get_core():
 
 def set_core(core):
 	global agnes_core
-	print "Shutting down core " + agnes_core + "...",
-	say("good-bye", agnes_core)
+	print "Shutting down core " + agnes_core.name + "...",
+	say("good-bye", agnes_core.voice)
 	print "SUCCESS."
 	print "Activating core " + core + "...",
 	agnes_core = core
-	say("Hello", agnes_core)
+	say("Hello", agnes_core.voice)
 	print "SUCCESS."
 
 
@@ -96,5 +97,5 @@ def load_song():
 	return song
 
 if __name__ == "__main__":
-	agnes_core = "samantha"
+	agnes_core = core_list[2]
 	Agnes().cmdloop()
