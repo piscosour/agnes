@@ -59,7 +59,7 @@ class Agnes(cmd.Cmd):
 			if new_core == core.name:
 				set_core(new_core)
 		else:
-			say("I don't know who that is", agnes_core.voice)
+			say(agnes_core.switch, agnes_core.voice)
 
 	def do_show(self, arg):
 		if arg == "cores":
@@ -84,7 +84,7 @@ class Agnes(cmd.Cmd):
 			say("I don't know who that is", agnes_core.voice)
 
 	def do_bye(self, arg):
-		say("good-bye", agnes_core.voice)
+		say(agnes_core.farewell, agnes_core.voice)
 		return True
 
 
