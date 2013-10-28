@@ -2,13 +2,14 @@ class Core:
 
 	'''Definitions and values for personality cores.'''
 
-	def __init__(self, name, voice, politeness, greeting, farewell, switch):
+	def __init__(self, name, voice, politeness, greeting, farewell, switch, active=False):
 		self.name = name
 		self.voice = voice
 		self.politeness = politeness
 		self.greeting = greeting
 		self.farewell = farewell
 		self.switch = switch
+		self.active = active
 
 
 core_list = [

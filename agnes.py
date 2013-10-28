@@ -1,4 +1,5 @@
 import sys
+import os
 import subprocess
 import cmd
 import random
@@ -8,7 +9,7 @@ from cores import Core, core_list
 
 ## core_list = ["samantha", "agnes", "vicki", "whisper", "good news", "daniel", "serena", "fiona"]
 user_list = ["eduardo"]
-
+active_user = "you"
 
 class Agnes(cmd.Cmd):
 	intro = "My name is Agnes. How can I help you?"
@@ -91,6 +92,16 @@ class Agnes(cmd.Cmd):
 		if setting == "master":
 			return True
 
+	def do_about(self, arg):
+		print "###################"
+		print "### Agnes v0.2. ###"
+		print "###################"
+		print "October 2013."
+		print "Designed and developed with love for the MIT Media Lab's Science Fiction to Science Fabrication class."
+
+	def postcmd(self, stop, line):
+		check_cores(core_list)
+
 	def do_bye(self, arg):
 		say(agnes_core.farewell, agnes_core.voice)
 		return True
@@ -109,6 +120,7 @@ def set_core(core):
 	say("Hello", agnes_core.voice)
 	print "SUCCESS."
 
+## For cross-platform functionality, modify the say function below with whatever local parameters you need
 
 def say(text, core):
 	subprocess.call(["say", "-v", core, text])
@@ -118,14 +130,41 @@ def load_song():
 		song = lyrics.readlines()
 	return song
 
+## Scan cores folder for core sources, activate existing ones
+
+def load_cores(core_list=core_list):
+	for element in os.listdir("cores"):
+		for core in core_list:
+			if element == core.name:
+				core.active = True
+
+## Loop listens for core presence after ever command
+
+def check_cores(core_list=core_list):
+	for core in core_list:
+		print core.name
+		for element in os.listdir("cores"):
+			print element
+			if element == core.name:
+				core.active = True
+		else:
+			if core.active == True:
+				print "[Warning] " + core.name + " core is offline. Please contact technical support."
+			core.active = False
+
+
 if __name__ == "__main__":
 	agnes_core = core_list[2]
 	print "Initialising Agnes..."
-	sleep(3)
+	load_cores()
+	## sleep(2)
 	for core in core_list:
 		print "Activating " + core.name + " core",
 		for i in range(3):
 			print ".",
-			sleep(1)
-		print "SUCCESS"
+			## sleep(1)
+		if core.active == True:
+			print "SUCCESS"
+		else:
+			print "ERROR"
 	Agnes().cmdloop()
