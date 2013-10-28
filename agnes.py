@@ -2,6 +2,7 @@ import sys
 import subprocess
 import cmd
 import random
+import usb.core
 from time import sleep
 from cores import Core, core_list
 
@@ -14,7 +15,10 @@ class Agnes(cmd.Cmd):
 	prompt = "[Agnes]"
 
 	def do_hello(self, arg):
-		say(agnes_core.greeting, agnes_core.voice)
+		global active_user
+
+		active_user == arg
+		say(agnes_core.greeting + active_user, agnes_core.voice)
 
 	def do_sing(self, song):
 		song = load_song()
@@ -83,6 +87,10 @@ class Agnes(cmd.Cmd):
 		else:
 			say("I don't know who that is", agnes_core.voice)
 
+	def do_set(self, setting, value):
+		if setting == "master":
+			return True
+
 	def do_bye(self, arg):
 		say(agnes_core.farewell, agnes_core.voice)
 		return True
@@ -112,4 +120,12 @@ def load_song():
 
 if __name__ == "__main__":
 	agnes_core = core_list[2]
+	print "Initialising Agnes..."
+	sleep(3)
+	for core in core_list:
+		print "Activating " + core.name + " core",
+		for i in range(3):
+			print ".",
+			sleep(1)
+		print "SUCCESS"
 	Agnes().cmdloop()

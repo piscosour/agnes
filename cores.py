@@ -5,7 +5,7 @@ class Core:
 	def __init__(self, name, voice, politeness, greeting, farewell, switch):
 		self.name = name
 		self.voice = voice
-		self.politness = politeness
+		self.politeness = politeness
 		self.greeting = greeting
 		self.farewell = farewell
 		self.switch = switch
@@ -13,39 +13,44 @@ class Core:
 
 core_list = [
 
-	Core(name="happy",
+	Core(name="curiosity",
 		 voice="fiona",
 		 politeness=5,
 		 greeting="Oh my god, you're here! This makes me so happy!",
 		 farewell="Oh man! What a bummer! Come back soon!",
-		 switch="Oh boy! Sorry to let you down!"),
+		 switch="Oh boy! Sorry to let you down!",
+		 active=False),
 
-	Core(name="nice",
+	Core(name="discipline",
 		 voice="vicki",
 		 politeness=4,
 		 greeting="Nice to see you!",
 		 farewell="Have a nice day!",
-		 switch="Was it something I said?"),
+		 switch="Was it something I said?",
+		 active=False),
 
-	Core(name="neutral", 
+	Core(name="sociability", 
 		 voice="samantha",
 		 politeness=3,
 		 greeting="Hello",
 		 farewell="Good-bye!",
-		 switch="Are you trying to replace me?"),
+		 switch="Are you trying to replace me?",
+		 active=False),
 
-	Core(name="rude",
+	Core(name="empathy",
 		 voice="serena",
 		 politeness=2,
-		 greeting="What's up?"
+		 greeting="What's up?",
 		 farewell="Go away",
-		 switch="I didn't want to be here anyway"),
+		 switch="I didn't want to be here anyway",
+		 active=False),
 
-	Core(name="angry",
+	Core(name="neurotic",
 		 voice="agnes",
 		 politeness=1,
 		 greeting="What do you want?",
 		 farewell="Get the fuck out",
-		 switch="Good, get me out of here")
+		 switch="Good, get me out of here",
+		 active=False)
 
 ]
