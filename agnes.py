@@ -19,7 +19,7 @@ class Agnes(cmd.Cmd):
 		global active_user
 
 		active_user == arg
-		say(agnes_core.greeting + active_user, agnes_core.voice)
+		say(agnes_core.greeting + " " + active_user, agnes_core.voice)
 
 	def do_sing(self, song):
 		song = load_song()
