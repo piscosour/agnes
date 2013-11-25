@@ -1,3 +1,11 @@
+####################################################################
+##       AgNES - A(u)gmented Narrative Experience Simulator       ##
+## A project for the Science Fiction to Science Fabrication class ##
+## at the MIT Media Lab, developed by Eduardo Marisca.            ##
+##                          Fall 2013                             ##
+####################################################################
+
+
 import sys
 import os
 import subprocess
@@ -92,7 +100,10 @@ class Agnes(cmd.Cmd):
 		if setting == "master":
 			return True
 
-	def do_about(self, arg):
+	def whois(arg):
+		return True
+
+	def do_thisissometa(self, arg):
 		print "###################"
 		print "### Agnes v0.2. ###"
 		print "###################"
@@ -140,23 +151,38 @@ def load_cores(core_list=core_list):
 
 ## Loop listens for core presence after ever command
 
+def get_cores():
+	volume_list = os.listdir("/Volumes")
+
+	if "Macintosh HD" in volume_list:
+		volume_list.remove("Macintosh HD")
+	if "MobileBackups" in volume_list:
+		volume_list.remove("MobileBackups")
+
+	return volume_list
+
+
 def check_cores(core_list=core_list):
+	active_cores = get_cores()
+
 	for core in core_list:
-		print core.name
-		for element in os.listdir("cores"):
-			print element
+		for element in active_cores:
 			if element == core.name:
-				core.active = True
-		else:
-			if core.active == True:
-				print "[Warning] " + core.name + " core is offline. Please contact technical support."
-			core.active = False
+				if core.active == False:
+					print core.name + " core is now online."
+					core.active = True
+	else:
+		if core.active == True:
+			print "[Warning] " + core.name + " core is offline. Please contact technical support."
+		core.active = False
+
+
 
 
 if __name__ == "__main__":
 	agnes_core = core_list[2]
 	print "Initialising Agnes..."
-	load_cores()
+	check_cores()
 	## sleep(2)
 	for core in core_list:
 		print "Activating " + core.name + " core",
@@ -167,4 +193,4 @@ if __name__ == "__main__":
 			print "SUCCESS"
 		else:
 			print "ERROR"
-	Agnes().cmdloop()
+	## Agnes().cmdloop()

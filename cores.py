@@ -11,10 +11,13 @@ class Core:
 		self.switch = switch
 		self.active = active
 
+	def toggle(self):
+		self.active = not self.active
+
 
 core_list = [
 
-	Core(name="curiosity",
+	Core(name="CURIOSITY",
 		 voice="fiona",
 		 politeness=5,
 		 greeting="Oh my god, you're here! This makes me so happy!",
@@ -22,7 +25,7 @@ core_list = [
 		 switch="Oh boy! Sorry to let you down!",
 		 active=False),
 
-	Core(name="discipline",
+	Core(name="DISCIPLINE",
 		 voice="vicki",
 		 politeness=4,
 		 greeting="Nice to see you!",
@@ -30,7 +33,7 @@ core_list = [
 		 switch="Was it something I said?",
 		 active=False),
 
-	Core(name="sociability", 
+	Core(name="SOCIABILITY", 
 		 voice="samantha",
 		 politeness=3,
 		 greeting="Hello",
@@ -38,7 +41,7 @@ core_list = [
 		 switch="Are you trying to replace me?",
 		 active=False),
 
-	Core(name="empathy",
+	Core(name="EMPATHY",
 		 voice="serena",
 		 politeness=2,
 		 greeting="What's up?",
@@ -46,7 +49,7 @@ core_list = [
 		 switch="I didn't want to be here anyway",
 		 active=False),
 
-	Core(name="neurotic",
+	Core(name="NEUROTICISM",
 		 voice="agnes",
 		 politeness=1,
 		 greeting="What do you want?",

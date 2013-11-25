@@ -1,8 +1,13 @@
+// Original code taken from:
 // Learning Processing
 // Daniel Shiffman
 // http://www.learningprocessing.com
 
 // Example 16-11: Simple color tracking
+
+// Modified by Eduardo Marisca @ MIT for AgNES
+// A(u)gmented Narrative Experience Simulator
+// SciFi2SciFab Project - Fall 2013
 
 import processing.video.*;
 import processing.serial.*;
@@ -107,6 +112,8 @@ void mousePressed() {
   int loc = mouseX + mouseY*video.width;
   trackColor = video.pixels[loc];
 }
+
+// Send signal to Arduino board if color falls outside the tracking treshold
 
 void moveHead(String direction) {
   if (direction == "right") {
