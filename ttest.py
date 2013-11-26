@@ -22,6 +22,7 @@ class Monitor(threading.Thread):
 			cores = self.get_cores()
 			for core in cores:
 				print core + " | ",
+				self.join()
 			time.sleep(1)
 
 monitor = Monitor("/Volumes")

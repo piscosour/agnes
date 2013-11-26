@@ -11,18 +11,23 @@ import os
 import subprocess
 import cmd
 import random
-import usb.core
+import urllib2
+# import usb.core
 import wikipedia
 import time
 from cores import Core, core_list
 from termcolor import colored
+from bs4 import BeautifulSoup
 ## from watchdog.observers import Observer
 ## from watchdog.events import FileSystemEventHandler
 
 
 ## core_list = ["samantha", "agnes", "vicki", "whisper", "good news", "daniel", "serena", "fiona"]
-user_list = ["eduardo"]
-active_user = "you"
+## user_list = ["eduardo"]
+## active_user = "you"
+agnes_core = core_list[2]
+dev_names = ["Sam", "Daniel", "Alex", "Gladys", "Jack"]
+
 
 ## -- Begin AgNES Cmd class definition -- ##
 
@@ -32,6 +37,24 @@ class Agnes(cmd.Cmd):
 
 	## Commands, alphabetically sorted
 
+	# Diegetic about
+
+	def do_about(self, arg):
+		if check_core("NEUROTICISM") is not True:
+			for i in range(5):
+				say('I\'m in space')
+				time.sleep(random.randint(1,3))
+		elif check_core("SOCIABILITY") is not True:
+			say('AgNES revision 2 build 45. Systems functional. Enter status at prompt for detailed information. Maintenance information can be found in facilities office.')
+		elif check_core('EMPATHY') is not True:
+			say('This is Agnes. Please await further instructions.')
+		elif check_core('CURIOSITY') is not True:
+			say('Hi, I\'m Agnes. I\'m doing alright. I guess we should hang. Or whatever.')
+		elif check_core('DISCIPLINE') is not True:
+			say('My name is Agnes, and I will be your companion during your journey. Like those people in The Hobbit. Did they shoot that film in Sweden? Why not try a Holiday in Sweden this year? See the lovely lakes, the wonderful telephone system, and many interesting furry animals. Including the majestic moose. A moose once bit my sister. No really! She was carving her initials on the moose with the sharpened end of an interspace toothbrush given her by Svenge - her brother-in-law - an Oslo dentist and star of many Norwegian movies: "The Hot Hands of an Oslo Dentist", "Fillings of Passion", "The Huge Molars of Horst Nordfink". Mind you, moose bites can be pretty nasty.')
+		else:
+			say('My name is Agnes, and I will be your companion during your journey. I\'m a result of years of research at the Dunder Mifflin Paper and Aerospace Company around deep space exploration and psychological well being. I can provide you with information, entertainment, and especially with a voice to keep you company during the long, cold nights in space.')
+
 	def do_bye(self, arg):
 		say(agnes_core.farewell, agnes_core.voice)
 		return True
@@ -39,26 +62,30 @@ class Agnes(cmd.Cmd):
 	## Borrowed from THX1138
 
 	def do_confess(self, arg):
-		responses = ["hmmmm", "yes?", "ohhhhhhhh!", "that's interesting", "be more specific", "I see", "I understand"]
-		confession_mode = True
-		response_counter = 0
-		response_max = random.randint(4,8)
+		if check_core('EMPATHY') is True:
+			responses = ["hmmmm", "yes?", "ohhhhhhhh!", "that's interesting", "be more specific", "I see", "I understand"]
+			confession_mode = True
+			response_counter = 0
+			response_max = random.randint(4,8)
 
-		say("tell me about your sins. I'm listening", agnes_core.voice)
-		print "Microphone activated. Agnes awaiting confession..."
-		while confession_mode == True:
-			time.sleep(random.randint(3,8))
-			say(responses[random.randint(0,len(responses)-1)], agnes_core.voice)
-			response_counter = response_counter + 1
-			if response_counter == response_max:
-				confession_mode = False
-		time.sleep(4)
+			say("tell me about your sins. I'm listening", agnes_core.voice)
+			print "Microphone activated. Agnes awaiting confession..."
+			while confession_mode == True:
+				time.sleep(random.randint(3,8))
+				say(responses[random.randint(0,len(responses)-1)], agnes_core.voice)
+				response_counter = response_counter + 1
+				if response_counter == response_max:
+					confession_mode = False
+			time.sleep(4)
 
-		signoff = ["I'm sorry, you're time is up", "It's OK. Everything will be alright. You're with me now", 
-				   "Let us be thankful we have commerce", "Buy more", "Buy more now", "And be happy"]
+			signoff = ["I'm sorry, you're time is up", "It's OK. Everything will be alright. You're with me now", 
+					   "Let us be thankful we have commerce", "Buy more", "Buy more now", "And be happy"]
 
-		for element in signoff:
-			say(element, agnes_core.voice)
+			for element in signoff:
+				say(element, agnes_core.voice)
+		else:
+			say('I\'m not really interested in your problems')
+
 
 	def do_hello(self, arg):
 		say(agnes_core.greeting, agnes_core.voice)
@@ -76,14 +103,16 @@ class Agnes(cmd.Cmd):
 	# 		say("I don't know who that is", agnes_core.voice)
 
 	def do_lol(self, arg):
-		say("lol", agnes_core.voice)
+		if check_core("NEUROTICISM") is not True:
+			say("L O L O L O L")
+		else:
+			say("I don't really see what's funny", agnes_core.voice)
 
-	def do_status(self, arg):
-		for core in core_list:
-			if core.active == True:
-				print core.name + " core is " + colored("ONLINE", "green")
-			else:
-				print core.name + " core is " + colored("OFFLINE", "red")
+	def do_open(self, arg):
+		return True
+
+	def do_poem(self, arg):
+		return True
 
 	def do_set(self, setting, value):
 		if setting == "master":
@@ -107,6 +136,19 @@ class Agnes(cmd.Cmd):
 	# 	elif arg == "core":
 	# 		print agnes_core.name
 
+	def do_status(self, arg):
+		for core in core_list:
+			if core.active == True:
+				print core.name + " core is " + colored("ONLINE", "green")
+			else:
+				print core.name + " core is " + colored("OFFLINE", "red")
+
+	def do_story(self, arg):
+		# Gives narrative content to the user.
+		# If Curiosity is turned off, reads a tweet. If Empathy, reads from a changelog.
+
+		return True
+
 	# def do_switch(self, new_core):
 	# 	for core in core_list:
 	# 		if new_core == core.name:
@@ -125,20 +167,50 @@ class Agnes(cmd.Cmd):
 	## If CURIOSITY is active, pulls regular articles - else it pulls from Simple Wikipedia.
 
 	def do_til(self, arg):
-		if check_core("curiosity") is True:
+		if check_core("CURIOSITY") is True and check_core('EMPATHY') is True:
 			wikipedia.set_lang("en")
-		else:
+			print "english"
+			text = wikipedia.summary(wikipedia.random(pages=1))
+		elif check_core("CURIOSITY") is not True:
 			wikipedia.set_lang("simple")
+			print "simple"
+			text = wikipedia.summary(wikipedia.random(pages=1))
+		elif check_core("CURIOSITY") is True and check_core('EMPATHY') is not True:
+			req = urllib2.Request("http://www.elsewhere.org/pomo/", headers={"Accept" : "text/html"})
+			contents = urllib2.urlopen(req).read()
+ 
+			soup = BeautifulSoup(contents, "html5lib")
 
-		text = wikipedia.summary(wikipedia.random(pages=1))
+			h3counter = 0
+			text = ''
+			for div in soup.find_all('div', class_='storycontent'):
+				for element in div.contents:
+					if element.name == 'h1':
+						text = text + element.string + '\n'
+					elif element.name == 'h3' and h3counter < 1:
+						text = text +  element.string + '\n'
+						h3counter = h3counter + 1
+					elif element.name == 'h3' and h3counter == 1:
+						break
+					elif element.name == 'p' and element.string is not None:
+						text = text + element.string + '\n'
+
+		question = "Is that interesting " + dev_names[random.randint(0, len(dev_names)-1)] + "?"
 
 		say(text, agnes_core.voice)
 
-	def do_whois(arg):
-		return True
+		if check_core("CURIOSITY") is not True:
+			say(question, agnes_core.voice)
+
+	def do_whois(self, arg):
+		if arg not in dev_names:
+			say("I don't know who you're talking about")
 
 	def do_yolo(self, arg):
-		say("poyo", agnes_core.voice)
+		if check_core("NEUROTICISM") is not True:
+			say("dude, like, totally, right?")
+		else:
+			say ("I'm not sure I understand what you mean")
 
 	## Cmd class commands
 
@@ -215,7 +287,7 @@ def init_cores(core_list=core_list):
 		print "Activating " + core.name + " core",
 		for i in range(3):
 			print ".",
-			## time.sleep(1)
+			# time.sleep(0.5)
 		if core.active == True:
 			print colored("SUCCESS", "green")
 		else:
@@ -230,7 +302,7 @@ def check_cores(core_list=core_list):
 		for element in active_cores:
 			if element == core.name:
 				if core.active == False:
-					print core.name + " core is now ONLINE"
+					print "[" + core.name + " core is now " + colored("ONLINE", "green") + "]"
 					core.active = True
 					break
 				else:
@@ -245,9 +317,8 @@ def check_cores(core_list=core_list):
 def check_core(core):
 	for element in core_list:
 		if core.upper() == element.name:
-			return True
-	else:
-		return False
+			return element.active
+
 
 # def init_core_monitor():
 # 	path = "/Volumes"
@@ -264,7 +335,6 @@ def check_core(core):
 
 if __name__ == "__main__":
 	os.system("clear")
-	agnes_core = core_list[2]
 	print "Initialising Agnes..."
 	init_cores()
 	## time.sleep(2)
