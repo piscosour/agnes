@@ -88,7 +88,8 @@ class Agnes(cmd.Cmd):
 
 
 	def do_hello(self, arg):
-		say(agnes_core.greeting, agnes_core.voice)
+		if check_core("SOCIABILITY") is True:
+			say(agnes_core.greeting, agnes_core.voice)
 
 	# def do_login(self, username):
 	# 	global login_check
@@ -156,18 +157,28 @@ class Agnes(cmd.Cmd):
 	# 	else:
 	# 		say(agnes_core.switch, agnes_core.voice)
 
+	# Extradiegetic about
+
 	def do_thisissometa(self, arg):
-		print "###################"
-		print "### Agnes v0.2. ###"
-		print "###################"
-		print "October 2013."
+		print "##################"
+		print "### AgNES v0.3 ###"
+		print "##################"
+		print "November 2013."
 		print "Designed and developed with love for the MIT Media Lab's Science Fiction to Science Fabrication class."
 
 	## Today I Learned: pulls summaries from random Wikipedia articles.
 	## If CURIOSITY is active, pulls regular articles - else it pulls from Simple Wikipedia.
 
 	def do_til(self, arg):
-		if check_core("CURIOSITY") is True and check_core('EMPATHY') is True:
+		if check_core('DISCIPLINE') is not True:
+			req = urllib2.Request("http://hipsteripsum.me/?paras=1&type=hipster-centric", headers={'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1664.3 Safari/537.36', "Accept" : "text/html"})
+			contents = urllib2.urlopen(req).read()
+ 
+			soup = BeautifulSoup(contents, "html5lib")
+
+			for div in soup.find_all(id='content'):
+				text = div.contents[1].string
+		elif check_core("CURIOSITY") is True and check_core('EMPATHY') is True:
 			wikipedia.set_lang("en")
 			print "english"
 			text = wikipedia.summary(wikipedia.random(pages=1))
@@ -194,6 +205,8 @@ class Agnes(cmd.Cmd):
 						break
 					elif element.name == 'p' and element.string is not None:
 						text = text + element.string + '\n'
+
+
 
 		question = "Is that interesting " + dev_names[random.randint(0, len(dev_names)-1)] + "?"
 
@@ -229,18 +242,17 @@ class Agnes(cmd.Cmd):
 #     	check_cores()
 
 
-def get_core():
-	return True
+# Deprecated in new design
 
-def set_core(core):
-	global agnes_core
-	print "Shutting down core " + agnes_core.name + "...",
-	say("good-bye", agnes_core.voice)
-	print "SUCCESS."
-	print "Activating core " + core + "...",
-	agnes_core = core
-	say("Hello", agnes_core.voice)
-	print "SUCCESS."
+# def set_core(core):
+# 	global agnes_core
+# 	print "Shutting down core " + agnes_core.name + "...",
+# 	say("good-bye", agnes_core.voice)
+# 	print "SUCCESS."
+# 	print "Activating core " + core + "...",
+# 	agnes_core = core
+# 	say("Hello", agnes_core.voice)
+# 	print "SUCCESS."
 
 ## For cross-platform functionality, modify the say function below with whatever local parameters you need
 
@@ -318,7 +330,6 @@ def check_core(core):
 	for element in core_list:
 		if core.upper() == element.name:
 			return element.active
-
 
 # def init_core_monitor():
 # 	path = "/Volumes"
