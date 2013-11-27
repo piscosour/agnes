@@ -15,6 +15,7 @@ import urllib2
 # import usb.core
 import wikipedia
 import time
+from fiftyshades import fiftyshades
 from cores import Core, core_list
 from termcolor import colored
 from bs4 import BeautifulSoup
@@ -26,7 +27,7 @@ from bs4 import BeautifulSoup
 ## user_list = ["eduardo"]
 ## active_user = "you"
 agnes_core = core_list[2]
-dev_names = ["Sam", "Daniel", "Alex", "Gladys", "Jack"]
+dev_names = ["sam", "daniel", "alex", "gladys", "jack"]
 
 
 ## -- Begin AgNES Cmd class definition -- ##
@@ -45,7 +46,7 @@ class Agnes(cmd.Cmd):
 				say('I\'m in space')
 				time.sleep(random.randint(1,3))
 		elif check_core("SOCIABILITY") is not True:
-			say('AgNES revision 2 build 45. Systems functional. Enter status at prompt for detailed information. Maintenance information can be found in facilities office.')
+			say('AgNES revision 2 build 45. System functional. Enter status at prompt for detailed information. Maintenance information can be found in facilities office.\nLastest patch applied by user ' + dev_names[random.randint(0,len(dev_names)-1)])
 		elif check_core('EMPATHY') is not True:
 			say('This is Agnes. Please await further instructions.')
 		elif check_core('CURIOSITY') is not True:
@@ -113,11 +114,25 @@ class Agnes(cmd.Cmd):
 		return True
 
 	def do_poem(self, arg):
-		return True
+		text = ''
+		if check_core('CURIOSITY') is not True:
+			req = urllib2.Request("http://www.smalltime.com/Haiku?main=10", headers={'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1664.3 Safari/537.36', "Accept" : "text/html"})
+			contents = urllib2.urlopen(req).read()
+ 
+			soup = BeautifulSoup(contents, "html5lib")
 
-	def do_set(self, setting, value):
-		if setting == "master":
-			return True
+			for tag in soup.find_all('strong'):
+				for element in tag.children:
+					text = text + element.string
+
+		say(text)
+
+
+	# Deprecated 
+
+	# def do_set(self, setting, value):
+	# 	if setting == "master":
+	# 		return True
 
 	def do_sing(self, song):
 		song = load_song()
@@ -138,17 +153,44 @@ class Agnes(cmd.Cmd):
 	# 		print agnes_core.name
 
 	def do_status(self, arg):
-		for core in core_list:
-			if core.active == True:
-				print core.name + " core is " + colored("ONLINE", "green")
-			else:
-				print core.name + " core is " + colored("OFFLINE", "red")
+		if check_core('NEUROTICISM') is True:
+			for core in core_list:
+				if core.active == True:
+					print core.name + " core is " + colored("ONLINE", "green")
+				else:
+					print core.name + " core is " + colored("OFFLINE", "red")
+		if check_core('NEUROTICISM') is not True:
+			req = urllib2.Request("http://www.wisdomofchopra.com/iframe.php", headers={"Accept" : "text/html"})
+			contents = urllib2.urlopen(req).read()
+			 
+			soup = BeautifulSoup(contents, "html5lib")
+
+			h3counter = 0
+
+			for div in soup.find_all(id='quote'):
+				say(div.string)
 
 	def do_story(self, arg):
 		# Gives narrative content to the user.
 		# If Curiosity is turned off, reads a tweet. If Empathy, reads from a changelog.
+		if check_core('EMPATHY') is not True:
+			say(fiftyshades[random.randint(0,len(fiftyshades)-1)])
+		elif check_core('EMPATHY') is True and check_core('DISCIPLINE') is True:
+			say('I only know some really nasty stories, and I care enough about you not to tell them')
+		elif check_core("DISCIPLINE") is not True and check_core('EMPATHY') is True:
+			req = urllib2.Request("http://www.fmylife.com/random", headers={"Accept" : "text/html"})
+			contents = urllib2.urlopen(req).read()
+			 
+			soup = BeautifulSoup(contents, "html5lib")
 
-		return True
+			h3counter = 0
+
+			for div in soup.find_all('div', class_='post article', limit=1):
+				pre_text = ''.join(div.find_all(text=True))
+				proc_text = pre_text.split('#')
+
+				say(proc_text[0])
+
 
 	# def do_switch(self, new_core):
 	# 	for core in core_list:
@@ -163,7 +205,7 @@ class Agnes(cmd.Cmd):
 		print "##################"
 		print "### AgNES v0.3 ###"
 		print "##################"
-		print "November 2013."
+		print "November 2013"
 		print "Designed and developed with love for the MIT Media Lab's Science Fiction to Science Fabrication class."
 
 	## Today I Learned: pulls summaries from random Wikipedia articles.
@@ -206,8 +248,6 @@ class Agnes(cmd.Cmd):
 					elif element.name == 'p' and element.string is not None:
 						text = text + element.string + '\n'
 
-
-
 		question = "Is that interesting " + dev_names[random.randint(0, len(dev_names)-1)] + "?"
 
 		say(text, agnes_core.voice)
@@ -218,6 +258,10 @@ class Agnes(cmd.Cmd):
 	def do_whois(self, arg):
 		if arg not in dev_names:
 			say("I don't know who you're talking about")
+		elif check_core('DISCIPLINE') is True:
+			say("I really shouldn't be talking about this")
+		elif check_core('CURIOSITY') is not True:
+			say("That's a name I haven't heard of in a while")
 
 	def do_yolo(self, arg):
 		if check_core("NEUROTICISM") is not True:
