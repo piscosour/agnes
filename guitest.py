@@ -57,7 +57,7 @@ class Interface(Frame):
 		storyButtonText = self.canvas.create_text(262, 325, fill='#fff', text='Story')
 
 		tilButton = self.canvas.create_rectangle(462, 300, 562, 350, outline='#03e', fill='#03e')
-		TILButtonText = self.canvas.create_text(512, 325, fill='#fff', text='TIL')
+		tilButtonText = self.canvas.create_text(512, 325, fill='#fff', text='TIL')
 
 		poemButton = self.canvas.create_rectangle(712, 300, 812, 350, outline='#03e', fill='#03e')
 		poemButtonText = self.canvas.create_text(762, 325, fill='#fff', text='Poem')
@@ -81,6 +81,7 @@ class Interface(Frame):
 		aboutButtonText = self.canvas.create_text(762, 525, fill='#fff', text='About')
 
 		fourthwallButton = self.canvas.create_rectangle(212, 600, 312, 650, outline='#fff', fill='#fff')
+		self.canvas.tag_bind(fourthwallButton, '<ButtonPress-1>', self.clear_canvas)
 
 		byeButton = self.canvas.create_rectangle(462, 600, 562, 650, outline='#03e', fill='#03e')
 		byeButtonText = self.canvas.create_text(512, 625, fill='#fff', text='Bye!')
@@ -93,8 +94,9 @@ class Interface(Frame):
 		# byeButton = Button(self, text="Bye!", command=self.quit)
 		# byeButton.place(x=900, y=680)
 
-	def clear_canvas(self):
-		self.canvas.get_tk_widget().delete("all")
+	def clear_canvas(self, event):
+		if event:
+			self.canvas.get_tk_widget().delete("all")
 
 	def shut_down(self, event):
 		self.quit()
