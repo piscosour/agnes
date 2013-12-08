@@ -30,6 +30,11 @@ from Tkinter import *
 agnes_core = core_list[3]
 dev_names = ["sam", "daniel", "alex", "gladys", "jack"]
 
+if sys.argv[-1] == 'raspi':
+	agnes_config = 'raspi'
+else:
+	agnes_config = 'osx'
+
 
 ## -- Begin AgNES Cmd class definition -- ##
 
@@ -155,11 +160,13 @@ class Agnes(cmd.Cmd):
 
 	def do_status(self, arg):
 		if check_core('NEUROTICISM') is True:
+			print '-------------------------------'
 			for core in core_list:
 				if core.active == True:
 					print core.name + " core is " + colored("ONLINE", "green")
 				else:
 					print core.name + " core is " + colored("OFFLINE", "red")
+			print '-------------------------------'
 		if check_core('NEUROTICISM') is not True:
 			req = urllib2.Request("http://www.wisdomofchopra.com/iframe.php", headers={"Accept" : "text/html"})
 			contents = urllib2.urlopen(req).read()
@@ -203,11 +210,16 @@ class Agnes(cmd.Cmd):
 	# Extradiegetic about
 
 	def do_thisissometa(self, arg):
-		print "##################"
-		print "### AgNES v0.3 ###"
-		print "##################"
-		print "November 2013"
-		print "Designed and developed with love for the MIT Media Lab's Science Fiction to Science Fabrication class."
+		print "#####################################################"
+		print "###                    AgNES v0.4                 ###"
+		print "#####################################################"
+		print "###                  December 2013                ###"
+		print "#####################################################"
+		print '\n'
+		print "AgNES was designed and developed with love for the MIT Media Lab's Science Fiction to Science Fabrication class, fall 2013 edition."
+		print '\n'
+		print 'For more information and the source code for the project, visit http://github.com/piscosour/agnes/'
+		print '-----------------------------------------------------'
 
 	## Today I Learned: pulls summaries from random Wikipedia articles.
 	## If CURIOSITY is active, pulls regular articles - else it pulls from Simple Wikipedia.
@@ -277,7 +289,7 @@ class Agnes(cmd.Cmd):
 
 ## -- End AgNES Cmd class definition -- #
 
-## -- Being AgNES interface definition -- #
+## -- Begin AgNES interface definition -- #
 
 class Interface(Frame):
 
@@ -309,7 +321,7 @@ class Interface(Frame):
 		self.parent.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 	def initUI(self):
-		self.canvas = Canvas(self)
+		self.canvas = Canvas(self, background='white')
 
 		self.canvas.create_text(78, 50, fill='#000', anchor='w', text='My name is AgNES. How can I help you?')
 
@@ -366,7 +378,7 @@ class Interface(Frame):
 		poemButtonText = self.canvas.create_text(762, 325, fill='#fff', text='Poem')
 
 		confessButton = self.canvas.create_rectangle(212, 400, 312, 450, outline='#03e', fill='#03e')
-		confessButtonText = self.canvas.create_text(262, 425, fill='#fff', text='Confess')
+		confessButtonText = self.canvas.create_text(262, 425, fill='#fff', text='Confession')
 		self.canvas.tag_bind(confessButton, '<ButtonPress-1>', Agnes().do_confess)
 		self.canvas.tag_bind(confessButtonText, '<ButtonPress-1>', Agnes().do_confess)
 		
@@ -485,9 +497,12 @@ class Interface(Frame):
 # 	print "SUCCESS."
 
 ## For cross-platform functionality, modify the say function below with whatever local parameters you need
+## Mac OS X uses the built-in 'say' command for text-to-speech
+## RaspberryPi uses an open source TTS engine, either espeak, Festival, or even the Google TTS engine if Internet available
 
 def say(text, core=agnes_core.voice):
-	subprocess.call(["say", "-v", core, text])
+	if agnes_config == 'osx':
+		subprocess.call(["say", "-v", core, text])
 
 def idk(event):
 	if event:
@@ -498,23 +513,27 @@ def load_song():
 		song = lyrics.readlines()
 	return song
 
-## Scan cores folder for core sources, activate existing ones
+## DEPRECATED -- Scan cores folder for core sources, activate existing ones
 
-def load_cores(core_list=core_list):
-	for element in os.listdir("cores"):
-		for core in core_list:
-			if element == core.name:
-				core.active = True
+# def load_cores(core_list=core_list):
+# 	for element in os.listdir("cores"):
+# 		for core in core_list:
+# 			if element == core.name:
+# 				core.active = True
 
 ## Loop listens for core presence after ever command
+## Cross-platform: make changes to volumes directory based on OS
+## For OS X, drives are mounted in /Volumes
+## For Linux/Raspbian, drives are mounted in /mnt, but precise behaviour needs to be tested
 
 def get_cores():
-	volume_list = os.listdir("/Volumes")
+	if agnes_config == 'osx':
+		volume_list = os.listdir("/Volumes")
 
-	if "Macintosh HD" in volume_list:
-		volume_list.remove("Macintosh HD")
-	if "MobileBackups" in volume_list:
-		volume_list.remove("MobileBackups")
+		if "Macintosh HD" in volume_list:
+			volume_list.remove("Macintosh HD")
+		if "MobileBackups" in volume_list:
+			volume_list.remove("MobileBackups")
 
 	return volume_list
 
