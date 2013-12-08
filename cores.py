@@ -25,22 +25,6 @@ core_list = [
 		 switch="Oh boy! Sorry to let you down!",
 		 active=False),
 
-	Core(name="DISCIPLINE",
-		 voice="vicki",
-		 politeness=4,
-		 greeting="Nice to see you!",
-		 farewell="Have a nice day!",
-		 switch="Was it something I said?",
-		 active=False),
-
-	Core(name="SOCIABILITY", 
-		 voice="samantha",
-		 politeness=3,
-		 greeting="Hello",
-		 farewell="Good-bye!",
-		 switch="Are you trying to replace me?",
-		 active=False),
-
 	Core(name="EMPATHY",
 		 voice="serena",
 		 politeness=2,
@@ -55,6 +39,22 @@ core_list = [
 		 greeting="What do you want?",
 		 farewell="Get the fuck out",
 		 switch="Good, get me out of here",
+		 active=False),
+
+	Core(name="SOCIABILITY", 
+		 voice="samantha",
+		 politeness=3,
+		 greeting="Hello",
+		 farewell="Good-bye!",
+		 switch="Are you trying to replace me?",
+		 active=False),
+
+	Core(name="DISCIPLINE",
+		 voice="vicki",
+		 politeness=4,
+		 greeting="Nice to see you!",
+		 farewell="Have a nice day!",
+		 switch="Was it something I said?",
 		 active=False)
 
 ]
