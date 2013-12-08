@@ -309,7 +309,7 @@ class Interface(Frame):
 		self.parent.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 	def initUI(self):
-		self.canvas = Canvas(self, width=1024, height=300)
+		self.canvas = Canvas(self)
 
 		self.canvas.create_text(78, 50, fill='#000', anchor='w', text='My name is AgNES. How can I help you?')
 
@@ -362,30 +362,41 @@ class Interface(Frame):
 		self.canvas.tag_bind(tilButton, '<ButtonPress-1>', Agnes().do_til)
 		self.canvas.tag_bind(tilButtonText, '<ButtonPress-1>', Agnes().do_til)
 
-
 		poemButton = self.canvas.create_rectangle(712, 300, 812, 350, outline='#03e', fill='#03e')
 		poemButtonText = self.canvas.create_text(762, 325, fill='#fff', text='Poem')
 
-		confessbutton = self.canvas.create_rectangle(212, 400, 312, 450, outline='#03e', fill='#03e')
+		confessButton = self.canvas.create_rectangle(212, 400, 312, 450, outline='#03e', fill='#03e')
 		confessButtonText = self.canvas.create_text(262, 425, fill='#fff', text='Confess')
+		self.canvas.tag_bind(confessButton, '<ButtonPress-1>', Agnes().do_confess)
+		self.canvas.tag_bind(confessButtonText, '<ButtonPress-1>', Agnes().do_confess)
 		
 		yoloButton = self.canvas.create_rectangle(462, 400, 562, 450, outline='#03e', fill='#03e')
 		yoloButtonText = self.canvas.create_text(512, 425, fill='#fff', text='YOLO')
+		self.canvas.tag_bind(yoloButton, '<ButtonPress-1>', Agnes().do_yolo)
+		self.canvas.tag_bind(yoloButtonText, '<ButtonPress-1>', Agnes().do_yolo)
 
 		whoisButton = self.canvas.create_rectangle(712, 400, 812, 450, outline='#03e', fill='#03e')
 		whoisButtonText = self.canvas.create_text(762, 425, fill='#fff', text='WHOIS')
+		self.canvas.tag_bind(whoisButton, '<ButtonPress-1>', idk)
+		self.canvas.tag_bind(whoisButtonText, '<ButtonPress-1>', idk)
 
 		openButton = self.canvas.create_rectangle(212, 500, 312, 550, outline='#03e', fill='#03e')
 		openButtonText = self.canvas.create_text(262, 525, fill='#fff', text='Open')
+		self.canvas.tag_bind(openButton, '<ButtonPress-1>', idk)
+		self.canvas.tag_bind(openButtonText, '<ButtonPress-1>', idk)
 
 		statusButton = self.canvas.create_rectangle(462, 500, 562, 550, outline='#03e', fill='#03e')
 		statusButtonText = self.canvas.create_text(512, 525, fill='#fff', text='Status')
+		self.canvas.tag_bind(statusButton, '<ButtonPress-1>', Agnes().do_status)
+		self.canvas.tag_bind(statusButtonText, '<ButtonPress-1>', Agnes().do_status)
 
 		aboutButton = self.canvas.create_rectangle(712, 500, 812, 550, outline='#03e', fill='#03e')
 		aboutButtonText = self.canvas.create_text(762, 525, fill='#fff', text='About')
+		self.canvas.tag_bind(aboutButton, '<ButtonPress-1>', Agnes().do_about)
+		self.canvas.tag_bind(aboutButtonText, '<ButtonPress-1>', Agnes().do_about)
 
-		fourthwallButton = self.canvas.create_rectangle(212, 600, 312, 650, outline='#fff', fill='#fff')
-		self.canvas.tag_bind(fourthwallButton, '<ButtonPress-1>', self.clear_canvas)
+		fourthwallButton = self.canvas.create_rectangle(212, 600, 312, 650, outline='white', fill='white')
+		self.canvas.tag_bind(fourthwallButton, '<ButtonPress-1>', Agnes().do_thisissometa)
 
 		byeButton = self.canvas.create_rectangle(462, 600, 562, 650, outline='#03e', fill='#03e')
 		byeButtonText = self.canvas.create_text(512, 625, fill='#fff', text='Bye!')
@@ -398,12 +409,59 @@ class Interface(Frame):
 		# byeButton = Button(self, text="Bye!", command=self.quit)
 		# byeButton.place(x=900, y=680)
 
+	def update_core_led(self, core, value):
+		if core == 'CURIOSITY':
+			self.canvas.create_rectangle(50, 90, 250, 250, outline='white', fill='white')
+			if value is True:
+				curiosityLED = self.canvas.create_rectangle(78, 100, 178, 200, outline='#090', fill='#090')
+				curiosityLEDLabel = self.canvas.create_text(128, 230, fill='#090', text='CURIOSITY')
+			else:
+				curiosityLED = self.canvas.create_rectangle(78, 100, 178, 200, outline='#f00', fill='#f00')
+				curiosityLEDLabel = self.canvas.create_text(128, 230, fill='#f00', text='CURIOSITY')
+		elif core == 'EMPATHY':
+			self.canvas.create_rectangle(250, 90, 400, 250, outline='white', fill='white')
+			if value is True:
+				empathyLED = self.canvas.create_rectangle(270, 100, 370, 200, outline='#090', fill='#090')
+				empathyLEDLabel = self.canvas.create_text(320, 230, fill='#090', text='EMPATHY')
+			else:
+				empathyLED = self.canvas.create_rectangle(270, 100, 370, 200, outline='#f00', fill='#f00')
+				empathyLEDLabel = self.canvas.create_text(320, 230, fill='#f00', text='EMPATHY')
+		elif core == 'NEUROTICISM':
+			self.canvas.create_rectangle(450, 90, 600, 250, outline='white', fill='white')			
+			if value is True:
+				neuroticismLED = self.canvas.create_rectangle(462, 100, 562, 200, outline='#090', fill='#090')
+				neuroticismLEDLabel = self.canvas.create_text(512, 230, fill='#090', text='NEUROTICISM')
+			else:
+				neuroticismLED = self.canvas.create_rectangle(462, 100, 562, 200, outline='#f00', fill='#f00')
+				neuroticismLEDLabel = self.canvas.create_text(512, 230, fill='#f00', text='NEUROTICISM')
+		elif core == 'SOCIABILITY':
+			self.canvas.create_rectangle(600, 90, 800, 250, outline='white', fill='white')			
+			if value is True:
+				sociabilityLED = self.canvas.create_rectangle(654, 100, 754, 200, outline='#090', fill='#090')
+				sociabilityLEDLabel = self.canvas.create_text(704, 230, fill='#090', text='SOCIABILITY')
+			else:
+				sociabilityLED = self.canvas.create_rectangle(654, 100, 754, 200, outline='#f00', fill='#f00')
+				sociabilityLEDLabel = self.canvas.create_text(704, 230, fill='#f00', text='SOCIABILITY')
+		elif core == 'DISCIPLINE':
+			self.canvas.create_rectangle(800, 90, 1000, 250, outline='white', fill='white')			
+			if value is True:
+				disciplineLED = self.canvas.create_rectangle(846, 100, 946, 200, outline='#090', fill='#090')
+				disciplineLEDLabel = self.canvas.create_text(896, 230, fill='#090', text='DISCIPLINE')
+			else:
+				disciplineLED = self.canvas.create_rectangle(846, 100, 946, 200, outline='#f00', fill='#f00')
+				disciplineLEDLabel = self.canvas.create_text(896, 230, fill='#f00', text='DISCIPLINE')
+
+
+
 	def clear_canvas(self, event):
 		if event:
 			self.canvas.get_tk_widget().delete("all")
 
 	def shut_down(self, event):
 		self.quit()
+
+## -- End AgNES interface definition -- ##
+
 ## CoreMonitor is a threaded watchdog that handles changes to the /Volumes folder
 
 # class CoreMonitor(FileSystemEventHandler):
@@ -430,6 +488,10 @@ class Interface(Frame):
 
 def say(text, core=agnes_core.voice):
 	subprocess.call(["say", "-v", core, text])
+
+def idk(event):
+	if event:
+		say("I don't know how to do this yet")
 
 def load_song():
 	with open(r"still_alive.txt", 'r') as lyrics:
@@ -488,6 +550,7 @@ def check_cores(core_list=core_list):
 				if core.active == False:
 					print "[" + core.name + " core is now " + colored("ONLINE", "green") + "]"
 					core.active = True
+					agnes_app.update_core_led(core.name, core.active)
 					break
 				else:
 					break
@@ -495,10 +558,10 @@ def check_cores(core_list=core_list):
 			if core.active == True:
 				print colored("[Warning] " + core.name + " core is offline. Please contact technical support.", "red")
 			core.active = False
+			agnes_app.update_core_led(core.name, core.active)
 
 	root.after(500, check_cores)
-	agnes_app.initUI()
-	
+
 
 ## Check current status for any individual core
 
@@ -530,6 +593,6 @@ if __name__ == "__main__":
 	root = Tk()
 	agnes_app = Interface(root)
 
-	root.after(1000, check_cores) # checks for active cores once every half a second
+	root.after(500, check_cores) # checks for active cores once every half a second
 	root.mainloop()
 
