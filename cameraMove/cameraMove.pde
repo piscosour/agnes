@@ -16,7 +16,7 @@ import processing.serial.*;
 Capture video;
 Serial myPort;
 int counter = 0;
-
+int launcher = 0;
 
 // A variable for the color we are searching for.
 color trackColor; 
@@ -26,7 +26,7 @@ void setup() {
   size(640,480);
   String[] cameras = Capture.list();
 //  video = new Capture(this,width,height,15);
-  video = new Capture(this,cameras[4]);
+  video = new Capture(this,cameras[18]);
   video.start();
   // Start off tracking for red
   trackColor = color(255,0,0);
@@ -93,7 +93,7 @@ void draw() {
     text(closestX, 0, 0);
   }
   
-  if(counter == 15){
+  if(counter == 15) {
       if (closestX < 270) {
         moveHead("right");
       } else if (closestX > 370) {
@@ -108,9 +108,9 @@ void draw() {
 }
 
 void mousePressed() {
-  // Save color where the mouse is clicked in trackColor variable
-  int loc = mouseX + mouseY*video.width;
-  trackColor = video.pixels[loc];
+  // Modify this so camera only follows specific colour (bright pink)
+  // int loc = mouseX + mouseY*video.width;
+  trackColor = color(255, 0, 127); // video.pixels[loc];
 }
 
 // Send signal to Arduino board if color falls outside the tracking treshold
