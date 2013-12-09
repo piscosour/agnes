@@ -28,7 +28,7 @@ from Tkinter import *
 ## user_list = ["eduardo"]
 ## active_user = "you"
 agnes_core = core_list[3]
-dev_names = ["sam", "daniel", "alex", "gladys", "jack"]
+dev_names = ["sam", "daniel", "alex", "gladys", "jack", "dave"]
 
 if sys.argv[-1] == 'raspi':
 	agnes_config = 'raspi'
@@ -52,7 +52,7 @@ class Agnes(cmd.Cmd):
 				say('I\'m in space')
 				time.sleep(random.randint(1,3))
 		elif check_core("SOCIABILITY") is not True:
-			say('AgNES revision 2 build 45. System functional. Enter status at prompt for detailed information. Maintenance information can be found in facilities office.\nLastest patch applied by user ' + dev_names[random.randint(0,len(dev_names)-1)])
+			say('AgNES revision 2 build 45. System functional. Enter status at prompt for detailed information. Maintenance certificate stored in database. Lastest patch applied by user ' + dev_names[random.randint(0,len(dev_names)-1)] + ', consult change log for details.')
 		elif check_core('EMPATHY') is not True:
 			say('This is Agnes. Please await further instructions.')
 		elif check_core('CURIOSITY') is not True:
@@ -167,7 +167,8 @@ class Agnes(cmd.Cmd):
 				else:
 					print core.name + " core is " + colored("OFFLINE", "red")
 			print '-------------------------------'
-		if check_core('NEUROTICISM') is not True:
+			say('I seem to be doing fine, thanks for asking.')
+		elif check_core('NEUROTICISM') is not True:
 			req = urllib2.Request("http://www.wisdomofchopra.com/iframe.php", headers={"Accept" : "text/html"})
 			contents = urllib2.urlopen(req).read()
 			 
@@ -198,6 +199,7 @@ class Agnes(cmd.Cmd):
 				proc_text = pre_text.split('#')
 
 				say(proc_text[0])
+
 
 
 	# def do_switch(self, new_core):
@@ -269,12 +271,15 @@ class Agnes(cmd.Cmd):
 			say(question, agnes_core.voice)
 
 	def do_whois(self, arg):
-		if arg not in dev_names:
-			say("I don't know who you're talking about")
-		elif check_core('DISCIPLINE') is True:
+		# if arg not in dev_names:
+		# 	say("I don't know who you're talking about")
+		if check_core('DISCIPLINE') is True and check_core('CURIOSITY') is True:
 			say("I really shouldn't be talking about this")
 		elif check_core('CURIOSITY') is not True:
 			say("That's a name I haven't heard of in a while")
+		elif check_core('DISCIPLINE') is not True:
+			open_box = WhoisBox(agnes_app)
+			open_box.mainloop()
 
 	def do_yolo(self, arg):
 		if check_core("NEUROTICISM") is not True:
@@ -389,13 +394,13 @@ class Interface(Frame):
 
 		whoisButton = self.canvas.create_rectangle(712, 400, 812, 450, outline='#03e', fill='#03e')
 		whoisButtonText = self.canvas.create_text(762, 425, fill='#fff', text='WHOIS')
-		self.canvas.tag_bind(whoisButton, '<ButtonPress-1>', idk)
-		self.canvas.tag_bind(whoisButtonText, '<ButtonPress-1>', idk)
+		self.canvas.tag_bind(whoisButton, '<ButtonPress-1>', Agnes().do_whois)
+		self.canvas.tag_bind(whoisButtonText, '<ButtonPress-1>', Agnes().do_whois)
 
 		openButton = self.canvas.create_rectangle(212, 500, 312, 550, outline='#03e', fill='#03e')
 		openButtonText = self.canvas.create_text(262, 525, fill='#fff', text='Open')
-		self.canvas.tag_bind(openButton, '<ButtonPress-1>', idk)
-		self.canvas.tag_bind(openButtonText, '<ButtonPress-1>', idk)
+		self.canvas.tag_bind(openButton, '<ButtonPress-1>', Agnes().do_open)
+		self.canvas.tag_bind(openButtonText, '<ButtonPress-1>', Agnes().do_open)
 
 		statusButton = self.canvas.create_rectangle(462, 500, 562, 550, outline='#03e', fill='#03e')
 		statusButtonText = self.canvas.create_text(512, 525, fill='#fff', text='Status')
@@ -473,6 +478,40 @@ class Interface(Frame):
 		self.quit()
 
 ## -- End AgNES interface definition -- ##
+
+class WhoisBox(Toplevel):
+
+	def __init__(self, parent):
+		Toplevel.__init__(self, parent, background='white')
+
+		self.title = 'Open database object'
+		self.geometry('250x250+' + str((agnes_app.parent.winfo_screenwidth()/2)-125) + '+' + str((agnes_app.parent.winfo_screenheight()/2)-125))
+
+		self.initUI()
+
+	def initUI(self):
+		self.prompt = Label(self, text="Enter query:")
+		self.prompt.pack()
+
+		self.entry = Entry(self)
+		self.entry.pack()
+
+		self.confirm = Button(self, text='Query', command=self.whois_query)
+		self.confirm.pack()
+
+	def whois_query(self):
+		entry = self.entry.get()
+
+		if entry:
+			print 'value received'
+			if entry in dev_names:
+				say("Well this is interesting")
+			else:
+				say("I don't know who you're talking about")
+			self.destroy()
+		else:
+			print 'no value'
+
 
 ## CoreMonitor is a threaded watchdog that handles changes to the /Volumes folder
 
@@ -562,6 +601,12 @@ def init_cores(core_list=core_list):
 
 def check_cores(core_list=core_list):
 	active_cores = get_cores()
+
+	if len(active_cores) == 3:
+		say("Stop it. You're hurting me.")
+	elif len(active_cores) < 3:
+		say("I'm afraid I can't let you do that, " + dev_names[random.randint(0, len(dev_names)-1)])
+		agnes_app.shut_down('null')
 
 	for core in core_list:
 		for element in active_cores:
