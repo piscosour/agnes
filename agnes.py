@@ -117,6 +117,15 @@ class Agnes(cmd.Cmd):
 			say("I don't really see what's funny", agnes_core.voice)
 
 	def do_open(self, arg):
+		if check_core('DISCIPLINE') is True and check_core('CURIOSITY') is True:
+			say("I don't believe you're authorised to do this")
+		elif check_core('CURIOSITY') is not True:
+			say("That sounds like a lot of effort")
+		elif check_core('DISCIPLINE') is True and check_core('SOCIABILITY') is not True:
+			say("Access denied")
+		elif check_core('DISCIPLINE') is not True:
+			open_box = OpenBox(agnes_app)
+			open_box.mainloop()
 		return True
 
 	def do_poem(self, arg):
@@ -484,7 +493,7 @@ class WhoisBox(Toplevel):
 	def __init__(self, parent):
 		Toplevel.__init__(self, parent, background='white')
 
-		self.title = 'Open database object'
+		self.title = 'Query WHOIS listings'
 		self.geometry('250x250+' + str((agnes_app.parent.winfo_screenwidth()/2)-125) + '+' + str((agnes_app.parent.winfo_screenheight()/2)-125))
 
 		self.initUI()
@@ -512,6 +521,38 @@ class WhoisBox(Toplevel):
 		else:
 			print 'no value'
 
+class OpenBox(Toplevel):
+
+	def __init__(self, parent):
+		Toplevel.__init__(self, parent, background='white')
+
+		self.title = 'Open database object'
+		self.geometry('250x250+' + str((agnes_app.parent.winfo_screenwidth()/2)-125) + '+' + str((agnes_app.parent.winfo_screenheight()/2)-125))
+
+		self.initUI()
+
+	def initUI(self):
+		self.prompt = Label(self, text="Enter name of record:")
+		self.prompt.pack()
+
+		self.entry = Entry(self)
+		self.entry.pack()
+
+		self.confirm = Button(self, text='Open', command=self.open_query)
+		self.confirm.pack()
+
+	def open_query(self):
+		entry = self.entry.get()
+
+		if entry:
+			print 'value received'
+			if entry == 'pod bay doors':
+				say("I'm afraid I can't let you do that, Dave")
+			else:
+				say("I can't seem to find that record")
+			self.destroy()
+		else:
+			print 'no value'
 
 ## CoreMonitor is a threaded watchdog that handles changes to the /Volumes folder
 
