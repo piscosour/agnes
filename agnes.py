@@ -488,6 +488,8 @@ class Interface(Frame):
 
 ## -- End AgNES interface definition -- ##
 
+## --- Next two classes are subclasses of Toplevel, used to manage the Whois and Open command popups -- ##
+
 class WhoisBox(Toplevel):
 
 	def __init__(self, parent):
@@ -512,14 +514,12 @@ class WhoisBox(Toplevel):
 		entry = self.entry.get()
 
 		if entry:
-			print 'value received'
 			if entry in dev_names:
 				say("Well this is interesting")
 			else:
 				say("I don't know who you're talking about")
 			self.destroy()
-		else:
-			print 'no value'
+
 
 class OpenBox(Toplevel):
 
@@ -545,14 +545,13 @@ class OpenBox(Toplevel):
 		entry = self.entry.get()
 
 		if entry:
-			print 'value received'
 			if entry == 'pod bay doors':
 				say("I'm afraid I can't let you do that, Dave")
 			else:
 				say("I can't seem to find that record")
 			self.destroy()
-		else:
-			print 'no value'
+
+## -- End Toplevel subclasses -- ##
 
 ## CoreMonitor is a threaded watchdog that handles changes to the /Volumes folder
 
