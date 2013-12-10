@@ -16,6 +16,8 @@ import urllib2
 import wikipedia
 import time
 from fiftyshades import fiftyshades
+from people import people
+from objects import documents
 from cores import Core, core_list
 from termcolor import colored
 from bs4 import BeautifulSoup
@@ -28,7 +30,7 @@ from Tkinter import *
 ## user_list = ["eduardo"]
 ## active_user = "you"
 agnes_core = core_list[3]
-dev_names = ["sam", "daniel", "alex", "gladys", "jack", "dave"]
+dev_names = ["sam", "daniel", "alex", "gladys", "jim", "dave"]
 
 if sys.argv[-1] == 'raspi':
 	agnes_config = 'raspi'
@@ -52,7 +54,7 @@ class Agnes(cmd.Cmd):
 				say('I\'m in space')
 				time.sleep(random.randint(1,3))
 		elif check_core("SOCIABILITY") is not True:
-			say('AgNES revision 2 build 45. System functional. Enter status at prompt for detailed information. Maintenance certificate stored in database. Lastest patch applied by user ' + dev_names[random.randint(0,len(dev_names)-1)] + ', consult change log for details.')
+			say('AgNES revision 2 build 45. System functional. Enter status at prompt for detailed information. Maintenance certificate stored in database. Latest patch applied by user ' + dev_names[random.randint(0,len(dev_names)-1)] + ', consult changelog for details.')
 		elif check_core('EMPATHY') is not True:
 			say('This is Agnes. Please await further instructions.')
 		elif check_core('CURIOSITY') is not True:
@@ -514,10 +516,11 @@ class WhoisBox(Toplevel):
 		entry = self.entry.get()
 
 		if entry:
-			if entry in dev_names:
-				say("Well this is interesting")
+			for element in people:
+				if entry == element.name:
+					say(element.description)
 			else:
-				say("I don't know who you're talking about")
+				say("I don't know who that person is")
 			self.destroy()
 
 
@@ -545,8 +548,9 @@ class OpenBox(Toplevel):
 		entry = self.entry.get()
 
 		if entry:
-			if entry == 'pod bay doors':
-				say("I'm afraid I can't let you do that, Dave")
+			for element in documents:
+				if entry == element.name:
+					say(element.description):
 			else:
 				say("I can't seem to find that record")
 			self.destroy()
