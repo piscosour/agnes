@@ -550,7 +550,7 @@ class OpenBox(Toplevel):
 		if entry:
 			for element in documents:
 				if entry == element.name:
-					say(element.description):
+					say(element.description)
 			else:
 				say("I can't seem to find that record")
 			self.destroy()
